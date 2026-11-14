@@ -1,0 +1,56 @@
+/* ---------------------------------------------------------------------
+   Startup screen - shown once per browser session while the catalogue loads.
+   Logo tile springs in, bag outline draws, wordmark letters rise, a real
+   progress bar tracks loading, then the screen lifts away.
+   --------------------------------------------------------------------- */
+.splash {
+  position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
+  background: radial-gradient(1200px 600px at 50% 40%, var(--surface) 0%, var(--bg) 60%);
+  transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out), filter 520ms var(--ease-out);
+}
+.splash.leaving { opacity: 0; transform: scale(1.04); filter: blur(6px); pointer-events: none; }
+.splash-inner { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+
+.splash-mark { width: 96px; height: 96px; animation: mark-in 720ms var(--ease-out) both; }
+.splash-mark .tile { transform-origin: 48px 48px; }
+.splash-mark .bag, .splash-mark .handle { stroke-dasharray: 220; stroke-dashoffset: 220; animation: draw 900ms var(--ease-in-out) 260ms forwards; }
+.splash-mark .handle { stroke-dasharray: 60; stroke-dashoffset: 60; animation-delay: 700ms; animation-duration: 520ms; }
+.splash-mark .spark { opacity: 0; transform-origin: 66px 30px; animation: spark 520ms var(--ease-out) 1050ms forwards; }
+.splash-mark .shine { opacity: 0; animation: shine 900ms var(--ease-out) 1100ms forwards; }
+@keyframes mark-in { 0% { opacity: 0; transform: scale(0.72) rotate(-8deg); } 60% { opacity: 1; transform: scale(1.04) rotate(1deg); } 100% { opacity: 1; transform: none; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes spark { 0% { opacity: 0; transform: scale(0.3) rotate(-30deg); } 70% { opacity: 1; transform: scale(1.15) rotate(8deg); } 100% { opacity: 1; transform: none; } }
+@keyframes shine { 0% { opacity: 0; transform: translateX(-40px); } 50% { opacity: 0.7; } 100% { opacity: 0; transform: translateX(60px); } }
+
+.splash-word { display: flex; font-family: var(--font-display); font-size: 2.6rem; font-weight: 700; letter-spacing: -0.045em; line-height: 1; }
+.splash-word span { display: inline-block; opacity: 0; transform: translateY(18px); animation: rise 560ms var(--ease-out) forwards; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.splash-tag { color: var(--ink-2); font-size: 0.98rem; opacity: 0; animation: fade-up 600ms var(--ease-out) 900ms forwards; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.splash-progress { width: 180px; height: 4px; border-radius: 4px; background: var(--surface-3); overflow: hidden; opacity: 0; animation: fade-up 400ms var(--ease-out) 600ms forwards; }
+.splash-progress i { display: block; height: 100%; width: 100%; border-radius: 4px; background: var(--brand-grad); transform: scaleX(0.04); transform-origin: left; transition: transform 380ms var(--ease-out); }
+.splash-status { font-size: 0.8rem; color: var(--ink-3); min-height: 1.2em; opacity: 0; animation: fade-up 400ms var(--ease-out) 700ms forwards; }
+.splash-skip { position: absolute; bottom: 28px; font-size: 0.8rem; color: var(--ink-3); background: none; border: 0; cursor: pointer; padding: 8px 12px; border-radius: 999px; }
+@media (hover: hover) and (pointer: fine) { .splash-skip:hover { color: var(--ink); background: var(--surface-3); } }
+
+.splash.error .splash-progress i { background: var(--red); }
+.splash-error { display: none; flex-direction: column; align-items: center; gap: 12px; text-align: center; max-width: 360px; }
+.splash.error .splash-error { display: flex; }
+.splash.error .splash-status { display: none; }
+
+/* content entrance after the splash */
+.enter-stagger > * { animation: fade-up 560ms var(--ease-out) both; }
+.enter-stagger > *:nth-child(1) { animation-delay: 40ms; }
+.enter-stagger > *:nth-child(2) { animation-delay: 110ms; }
+.enter-stagger > *:nth-child(3) { animation-delay: 180ms; }
+.enter-stagger > *:nth-child(4) { animation-delay: 250ms; }
+.enter-stagger > *:nth-child(n + 5) { animation-delay: 320ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .splash, .splash.leaving { transform: none; filter: none; transition: opacity 200ms ease; }
+  .splash-mark, .splash-word span, .splash-tag, .splash-progress, .splash-status, .splash-mark .spark { animation: none; opacity: 1; transform: none; }
+  .splash-mark .bag, .splash-mark .handle { animation: none; stroke-dashoffset: 0; }
+  .splash-mark .shine { display: none; }
+  .enter-stagger > * { animation: none; }
+}

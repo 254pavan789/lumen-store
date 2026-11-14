@@ -1,0 +1,23 @@
+{
+  "name": "item-purchase-management",
+  "version": "3.1.0",
+  "description": "Lumen Store - e-commerce storefront + Seller Hub (Item & Purchase Management) - Node.js + Express + MySQL with a Python processing engine",
+  "main": "backend/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "db:setup": "python engine/migrate.py --seed",
+    "db:reset": "python engine/migrate.py --reset --seed",
+    "test": "python tests/e2e_test.py",
+    "start:prod": "sh deploy/entrypoint.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
+}

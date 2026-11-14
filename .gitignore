@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# secrets - never commit your real database password
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# build / OS files
+*.zip
+*.log
+.DS_Store
+Thumbs.db

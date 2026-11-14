@@ -1,0 +1,5 @@
+# keep shell scripts LF and Windows scripts CRLF on every OS
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.bat text eol=crlf
+*.png binary
