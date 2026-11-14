@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1 – 2026-11-15
+### Fixed
+- Hosted version (TiDB Cloud): Seller Hub dashboard showed "Could not load data (HTTP 503) - Database is unavailable". TiDB enforces `ONLY_FULL_GROUP_BY` and rejected `GROUP BY` queries that listed only the primary key. All `GROUP BY` clauses (dashboard, categories, orders list) now name every selected column - valid on MySQL 8, MariaDB and TiDB in strict mode.
+- Only real connection failures return 503 "Database is unavailable"; any other SQL error is now a 500 `DATABASE_ERROR` that includes the MySQL error code and is written to the server log.
+
 ## 3.1.0 – 2026-11-15 — free online hosting
 ### Added
 - **Deploy to the internet for free** with a shareable link: `Dockerfile` (Node.js 22 + Python 3, non-root), `render.yaml` Render Blueprint (free web service, Singapore, `/api/health` health check, auto-deploy on push), `deploy/entrypoint.sh`, step-by-step **DEPLOY.md** (GitHub → TiDB Cloud Starter → Render).

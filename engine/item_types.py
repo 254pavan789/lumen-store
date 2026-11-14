@@ -50,7 +50,7 @@ def _ensure_unique(cur, name: str, exclude_id: int | None = None) -> None:
 
 
 def _fetch(cur, type_id: int) -> dict[str, Any]:
-    cur.execute(_SELECT_TYPES + " WHERE it.id = %s GROUP BY it.id", (type_id,))
+    cur.execute(_SELECT_TYPES + " WHERE it.id = %s GROUP BY it.id, it.type_name, it.created_at, it.updated_at", (type_id,))
     row = cur.fetchone()
     if not row:
         raise NotFoundError("Item type not found", code="ITEM_TYPE_NOT_FOUND")
@@ -58,7 +58,7 @@ def _fetch(cur, type_id: int) -> dict[str, Any]:
 
 
 def list_types(cur, req: dict[str, Any]) -> dict[str, Any]:
-    cur.execute(_SELECT_TYPES + " GROUP BY it.id ORDER BY it.type_name")
+    cur.execute(_SELECT_TYPES + " GROUP BY it.id, it.type_name, it.created_at, it.updated_at ORDER BY it.type_name")
     return {"status": 200, "data": [_decorate(r) for r in cur.fetchall()]}
 
 

@@ -127,8 +127,12 @@ def process(action: str, payload: dict[str, Any]) -> tuple[int, dict[str, Any]]:
             busy = ConflictError("The records are busy with another transaction. Please retry.",
                                  code="TRANSACTION_CONFLICT")
             return busy.status, busy.to_body()
-        unavailable = ServiceUnavailableError("Database is unavailable. Please try again shortly.")
-        return unavailable.status, unavailable.to_body()
+        if code in _CONNECTION_ERRORS:
+            unavailable = ServiceUnavailableError("Database is unavailable. Please try again shortly.")
+            return unavailable.status, unavailable.to_body()
+        return 500, {"success": False, "error": {"code": "DATABASE_ERROR",
+                                                 "message": f"A database error occurred (MySQL {code}). "
+                                                            "No changes were saved."}}
     except pymysql.err.Error as exc:
         log(f"database error in {action}: {exc}")
         return 500, {"success": False, "error": {"code": "DATABASE_ERROR",
@@ -136,6 +140,11 @@ def process(action: str, payload: dict[str, Any]) -> tuple[int, dict[str, Any]]:
     except Exception:  # noqa: BLE001 - never leak internals to the client
         log(f"unhandled error in {action}:\n{traceback.format_exc()}")
         return 500, _SAFE_500
+
+
+# MySQL client/server error codes that mean "cannot reach / use the database right now"
+_CONNECTION_ERRORS = {1040, 1044, 1045, 1049, 1053, 1129, 1130, 1203, 1226, 2002, 2003, 2005, 2006,
+                      2013, 2026, 2055, 8004, 9001, 9002, 9003, 9004, 9005, 9006, 9007}
 
 
 class Engine:

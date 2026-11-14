@@ -81,7 +81,7 @@ def dashboard(cur, req: dict[str, Any]) -> dict[str, Any]:
                COALESCE(SUM(pi.quantity * pi.unit_price), 0) AS total_amount
         FROM purchases p
         JOIN purchase_items pi ON pi.purchase_id = p.id
-        GROUP BY p.id
+        GROUP BY p.id, p.order_id, p.purchase_date, p.status, p.created_at
         ORDER BY p.created_at DESC, p.id DESC
         LIMIT 6
         """
@@ -101,7 +101,7 @@ def dashboard(cur, req: dict[str, Any]) -> dict[str, Any]:
         JOIN purchases p   ON p.id = pi.purchase_id AND p.status = 'COMPLETED'
         JOIN items i       ON i.id = pi.item_id
         JOIN item_types it ON it.id = i.item_type_id
-        GROUP BY i.id
+        GROUP BY i.id, i.name, it.type_name, i.price, i.stock_available
         ORDER BY units DESC, revenue DESC
         LIMIT 5
         """

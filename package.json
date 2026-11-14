@@ -1,6 +1,6 @@
 {
   "name": "item-purchase-management",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Lumen Store - e-commerce storefront + Seller Hub (Item & Purchase Management) - Node.js + Express + MySQL with a Python processing engine",
   "main": "backend/server.js",
   "private": true,

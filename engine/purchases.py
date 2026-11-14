@@ -242,7 +242,8 @@ def list_purchases(cur, req: dict[str, Any]) -> dict[str, Any]:
     """
     if where:
         sql += " WHERE " + " AND ".join(where)
-    sql += " GROUP BY p.id ORDER BY p.purchase_date DESC, p.id DESC"
+    sql += (" GROUP BY p.id, p.order_id, p.purchase_date, p.status, p.remarks, p.created_at, p.updated_at"
+            " ORDER BY p.purchase_date DESC, p.id DESC")
     cur.execute(sql, params)
     rows = clean_rows(cur.fetchall())
     for row in rows:
