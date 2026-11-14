@@ -21,6 +21,7 @@ Run standalone for a smoke test:
 from __future__ import annotations
 
 import json
+import os
 import sys
 import threading
 import traceback
@@ -42,7 +43,7 @@ import purchases
 from config import SETTINGS
 from errors import AppError, ConflictError, ServiceUnavailableError
 
-ENGINE_VERSION = "3.0.0"
+ENGINE_VERSION = "3.1.2"
 
 Handler = Callable[[Any, dict[str, Any]], dict[str, Any]]
 
@@ -53,7 +54,8 @@ def _health(cur, req: dict[str, Any]) -> dict[str, Any]:
     return {"status": 200, "data": {"engine": "python", "engine_version": ENGINE_VERSION,
                                     "python": sys.version.split()[0],
                                     "database": info["db"], "mysql_version": info["version"],
-                                    "low_stock_threshold": SETTINGS.low_stock_threshold}}
+                                    "low_stock_threshold": SETTINGS.low_stock_threshold,
+                                    "release": (os.environ.get("RENDER_GIT_COMMIT") or "local")[:7]}}
 
 
 ACTIONS: dict[str, Handler] = {
@@ -128,7 +130,7 @@ def process(action: str, payload: dict[str, Any]) -> tuple[int, dict[str, Any]]:
                                  code="TRANSACTION_CONFLICT")
             return busy.status, busy.to_body()
         if code in _CONNECTION_ERRORS:
-            unavailable = ServiceUnavailableError("Database is unavailable. Please try again shortly.")
+            unavailable = ServiceUnavailableError(f"Database is unavailable (MySQL {code}). Please try again shortly.")
             return unavailable.status, unavailable.to_body()
         return 500, {"success": False, "error": {"code": "DATABASE_ERROR",
                                                  "message": f"A database error occurred (MySQL {code}). "
